@@ -25,8 +25,26 @@ const Dashboard = () => {
     console.log("Calling...");
   };
 
-  const handleLeaveChat = () => {
-    console.log("Leaving chat...");
+  const handleLeaveChat = async () => {
+    if (!channel || !user?.id) {
+      console.log("No active channel or user");
+      return;
+    }
+
+    // Confirm before leaving
+    try {
+      // Remove current user from the channel using Stream's removeMembers method
+      await channel.removeMembers([user.id]);
+
+      // Clear the active channel
+      setActiveChannel(undefined);
+
+      // Redirect to dashboard after leaving
+      router.push("/dashboard");
+    } catch (e) {
+      console.error("Error leaving chat:", e);
+      // You could add a toast notification here for better UX
+    }
   };
 
   return (
@@ -55,12 +73,12 @@ const Dashboard = () => {
                   <LogOutIcon className="w-4 h-4" />
                 </Button>
               </div>
+            </div>
 
-              <MessageList />
+            <MessageList />
 
-              <div className="sticky bottom-0 w-full">
-                <MessageInput />
-              </div>
+            <div className="sticky bottom-0 w-full">
+              <MessageInput />
             </div>
           </Window>
           <Thread />
